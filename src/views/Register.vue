@@ -175,6 +175,7 @@ export default {
   methods: {
     
     register(e) {
+       let currentObj = this;
 
       this.errors = [];
       this.success = [];
@@ -278,7 +279,15 @@ export default {
             //   this.password_confirmation = null;
             //   this.errors  =  [];
             //   this.$noty.success('Congratulations! Account created');
-          });
+          }).catch(function(error) {
+          console.log(error.response.data.errors);
+          const data = error.response.data.errors;
+          for (var key in data){
+            // jil.logs = data;
+            // console.log(data);
+            currentObj.$noty.error(data[key]);
+           }
+        });
         },
       },
   components: {
