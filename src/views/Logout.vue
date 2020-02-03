@@ -32,6 +32,7 @@
 			    	this.$store.commit('upload_image',null);
 			    	window.location="/login";
 			    currentObj.$cookies.remove('vs_authenticated');
+			    currentObj.$cookies.remove('vs_redirect');
 			}
 		},
 		mounted(){
