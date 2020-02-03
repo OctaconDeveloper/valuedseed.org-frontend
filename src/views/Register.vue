@@ -214,15 +214,70 @@ export default {
       this.$http
         .post('http://api.valuedseed.org/api/register', formData)
         .then(response => {
-            console.log(response);
-            this.success.push('Congratulations! '+this.first_name+' '+this.last_name);
-            this.first_name = null;
-              this.last_name = null;
-              this.email = null;
-              this.password = null;
-              this.password_confirmation = null;
-              this.errors  =  [];
-              this.$noty.success('Congratulations! Account created');
+            if(currentObj.$cookies.get('vs_products')){
+                let products = [];
+                let plans = [];
+                let user_id = null;
+                const auth = 'Bearer '+ user_data.token;
+                products.push(currentObj.$cookies.get('vs_products'));
+                plans.push(currentObj.$cookies.get('vs_plan'));
+                user_id = currentObj.$cookies.get('vs_id');
+                 
+                  this.$http({ 
+                    method: 'POST',
+                    'url': 'http://api.valuedseed.org/api/pay',
+                    'data': {
+                      user_id: user_id,
+                      products: products,
+                      plans: plans
+                    },
+                    "headers":{
+                      'Authorization': auth
+                    }
+                  }).then(response => {   
+                    currentObj.$cookies.remove('vs_redirect');
+                    currentObj.$cookies.remove('vs_products');
+                    currentObj.$cookies.remove('vs_plan');       
+                    window.location.href = response.data;
+                    // console.log(response.data); 
+                });
+                
+            }else{
+              console.log(response.data.data);
+            const user_data = response.data.data;
+
+            currentObj.$cookies.set('vs_id',user_data.id)
+
+              .set('vs_token',user_data.token)
+              .set('vs_role',user_data.role)
+              .set('vs_first_name',user_data.first_name)
+              .set('vs_last_name',user_data.last_name)
+              .set('vs_gender',user_data.gender)
+              .set('vs_email',user_data.email)
+              .set('vs_authenticated','true');
+
+              const name = user_data.first_name.toUpperCase()+ ' '+user_data.last_name;
+              let data = [];
+              data = {
+                'id': user_data.id,
+                'name': name,
+                'token': user_data.token,
+                'role': user_data.role,
+                'email': user_data.email,
+                'status': true
+              };
+              this.$store.commit('init',data);
+              // console.log(response);
+               window.location.href = 'http://shop.valuedseed.org/dashboard';
+              // this.success.push('Congratulations! '+this.first_name+' '+this.last_name);
+            }
+            // this.first_name = null;
+            //   this.last_name = null;
+            //   this.email = null;
+            //   this.password = null;
+            //   this.password_confirmation = null;
+            //   this.errors  =  [];
+            //   this.$noty.success('Congratulations! Account created');
           });
         },
       },

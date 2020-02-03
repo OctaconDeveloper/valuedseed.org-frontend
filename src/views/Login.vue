@@ -169,10 +169,36 @@ export default {
                 'status': true
               };
               this.$store.commit('init',data);
-              if(currentObj.$cookies.get('vs_redirect')){
-                window.location.href=currentObj.$cookies.get('vs_redirect');
+              if(currentObj.$cookies.get('vs_products')){
+                let products = [];
+                let plans = [];
+                let user_id = null;
+                const auth = 'Bearer '+ user_data.token;
+                products.push(currentObj.$cookies.get('vs_products'));
+                plans.push(currentObj.$cookies.get('vs_plan'));
+                user_id = currentObj.$cookies.get('vs_id');
+                 
+                  this.$http({ 
+                    method: 'POST',
+                    'url': 'http://api.valuedseed.org/api/pay',
+                    'data': {
+                      user_id: user_id,
+                      products: products,
+                      plans: plans
+                    },
+                    "headers":{
+                      'Authorization': auth
+                    }
+                  }).then(response => {
+                    currentObj.$cookies.remove('vs_redirect');
+                    currentObj.$cookies.remove('vs_products');
+                    currentObj.$cookies.remove('vs_plan');
+                    window.location.href = response.data;
+                    // console.log(response.data); 
+                });
+                // window.location.href=currentObj.$cookies.get('vs_redirect');
               }else{
-                currentObj.$cookies.get('role') == 'customer' ? window.location.href = 'http://dashboard.valuedseed.org' : window.location.href = 'http://shop.valuedseed.org';
+                currentObj.$cookies.get('role') == 'customer' ? window.location.href = 'http://dashboard.valuedseed.org' : window.location.href = 'http://localhost:8082';
               }
 
           })
