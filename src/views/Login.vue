@@ -198,7 +198,7 @@ export default {
                 });
                 // window.location.href=currentObj.$cookies.get('vs_redirect');
               }else{
-                currentObj.$cookies.get('role') == 'customer' ? window.location.href = 'http://dashboard.valuedseed.org' : window.location.href = 'http://localhost:8082';
+                currentObj.$cookies.get('role') == 'customer' ? window.location.href = 'http://dashboard.valuedseed.org' : window.location.href = 'http://shop.valuedseed.org/dashboard';
               }
 
           })
