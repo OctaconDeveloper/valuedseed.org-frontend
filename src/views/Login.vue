@@ -145,7 +145,6 @@ export default {
           password : this.password
         })
         .then(response => {
-            currentObj.$cookies.keys().forEach(cookie => currentObj.$cookies.remove(cookie))
             console.log(response.data.data);
             const user_data = response.data.data;
 
@@ -169,10 +168,12 @@ export default {
                 'email': user_data.email,
                 'status': true
               };
-
               this.$store.commit('init',data);
-
-            currentObj.$cookies.get('role') == 'customer' ? window.location.href = 'http://dashboard.valuedseed.org' : window.location.href = 'http://shop.valuedseed.org';
+              if(currentObj.$cookies.get('vs_redirect')){
+                window.location.href=currentObj.$cookies.get('vs_redirect');
+              }else{
+                currentObj.$cookies.get('role') == 'customer' ? window.location.href = 'http://dashboard.valuedseed.org' : window.location.href = 'http://shop.valuedseed.org';
+              }
 
           })
         .catch(function(error) {
